@@ -23,7 +23,7 @@ import gymnasium as gym
 import numpy as np
 from qlearning import QLearningAgent
 from qlearning_eps_scheduling import QLearningAgentEpsScheduling
-from sarsa import SARSAAgent
+from sarsa import SarsaAgent
 
 
 env = gym.make("Taxi-v3", render_mode="rgb_array")
@@ -34,6 +34,7 @@ n_actions = env.action_space.n  # type: ignore
 # 1. Play with QLearningAgent
 #################################################
 
+# You can edit these hyperparameters!
 agent = QLearningAgent(
     learning_rate=0.5, epsilon=0.25, gamma=0.99, legal_actions=list(range(n_actions))
 )
@@ -57,6 +58,13 @@ def play_and_train(env: gym.Env, agent: QLearningAgent, t_max=int(1e4)) -> float
 
         # Train agent for state s
         # BEGIN SOLUTION
+        agent.update(s, a, r, next_s)
+        
+        total_reward += r
+        s = next_s  # Move to the next state
+        
+        if done:
+            break  
         # END SOLUTION
 
     return total_reward
