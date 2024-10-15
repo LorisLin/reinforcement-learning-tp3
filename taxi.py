@@ -72,12 +72,6 @@ def play_and_train(env: gym.Env, agent: QLearningAgent, t_max=int(1e4)) -> float
 start_time1 = time.time() 
 rewards = []
 
-for i in range(1000):
-    rewards.append(play_and_train(env, agent))
-    if i % 100 == 0:
-        print("mean reward", np.mean(rewards[-100:]))
-
-assert np.mean(rewards[-100:]) > 0.0
 # TODO: créer des vidéos de l'agent en action
 
 QLearningAgentFolder = "./QLearningAgent_videos"
@@ -88,6 +82,12 @@ env = RecordVideo(gym.make("Taxi-v3", render_mode="rgb_array"),
                   video_folder=QLearningAgentFolder,
                   episode_trigger=lambda x: x == 729)
 
+for i in range(1000):
+    rewards.append(play_and_train(env, agent))
+    if i % 100 == 0:
+        print("mean reward", np.mean(rewards[-100:]))
+
+assert np.mean(rewards[-100:]) > 0.0
 env.close()
 
 end_time1 = time.time()
@@ -105,6 +105,15 @@ agent = QLearningAgentEpsScheduling(
 start_time2 = time.time() 
 rewards = []
 
+# TODO: créer des vidéos de l'agent en action
+QLearningAgentEpsSchedulingFolder = "./QLearningAgentEpsScheduling_videos"
+if not os.path.exists(QLearningAgentEpsSchedulingFolder):
+    os.makedirs(QLearningAgentEpsSchedulingFolder)
+
+env = RecordVideo(gym.make("Taxi-v3", render_mode="rgb_array"), 
+                video_folder=QLearningAgentEpsSchedulingFolder,
+                episode_trigger=lambda x: x == 729)
+
 for i in range(1000):
     rewards.append(play_and_train(env, agent))
     if i % 100 == 0:
@@ -112,17 +121,10 @@ for i in range(1000):
 
 assert np.mean(rewards[-100:]) > 0.0
 
-# TODO: créer des vidéos de l'agent en action
-QLearningAgentEpsSchedulingFolder = "./QLearningAgentEpsScheduling_videos"
-if not os.path.exists(QLearningAgentEpsSchedulingFolder):
-    os.makedirs(QLearningAgentEpsSchedulingFolder)
-
-env = RecordVideo(gym.make("Taxi-v3", render_mode="rgb_array"), 
-                  video_folder=QLearningAgentEpsSchedulingFolder)
-env.close()
-
 end_time2 = time.time() 
 rewards_QLearningAgentEpsScheduling = rewards
+
+env.close()
 
 ####################
 # 3. Play with SARSA
@@ -152,6 +154,6 @@ env.close()
 end_time3 = time.time()
 rewards_SarsaAgent = rewards
 
-print(f"Total training time for QLearningArgent: {end_time1 - start_time1} seconds, Récompense moyenne : {np.mean(rewards_QLearningAgent[-100:])}")
-print(f"Total training time for QLearningAgentEpsScheduling: {end_time2 - start_time2} seconds,  Récompense moyenne : {np.mean(rewards_QLearningAgentEpsScheduling[-100:])}")
-print(f"Total training time for SarsaAgent: {end_time3 - start_time3} seconds,  Récompense moyenne : {np.mean(rewards_SarsaAgent[-100:])}")
+print(f"Total training time for QLearningArgent: {end_time1 - start_time1} seconds, Reward mean: {np.mean(rewards_QLearningAgent[-100:])}")
+print(f"Total training time for QLearningAgentEpsScheduling: {end_time2 - start_time2} seconds, Reward mean : {np.mean(rewards_QLearningAgentEpsScheduling[-100:])}")
+print(f"Total training time for SarsaAgent: {end_time3 - start_time3} seconds, Reward mean : {np.mean(rewards_SarsaAgent[-100:])}")
